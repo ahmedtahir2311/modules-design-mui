@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Box, Grid } from "@mui/material";
 
 //components
 import UserChat from "@/components/Dashboard/Chat/UsersChat/UserChat";
 import Messaging from "@/components/Dashboard/Chat//Messaging/Messaging";
+import { useChatMessages, useChatThreads } from "@/hooks/chat.hook";
 
 //hooks
-import { useForm } from "react-hook-form";
 
 const Chat = () => {
+  const [activeChat, setActiveChat] = useState("");
+
+  const { data: chatThreads } = useChatThreads();
+  const { data: chatMessages, refetch: refetchMessages } =
+    useChatMessages(activeChat);
+
+  useEffect(() => {
+    activeChat && refetchMessages();
+  }, [activeChat]);
+
   return (
     <Box
       sx={{
@@ -19,10 +29,18 @@ const Chat = () => {
     >
       <Grid container>
         <Grid item lg={4} xl={4}>
-          <UserChat />
+          <UserChat
+            chats={chatThreads?.data}
+            setActiveChat={setActiveChat}
+            activeChat={activeChat}
+          />
         </Grid>
         <Grid item lg={8} xl={8}>
-          <Messaging />
+          <Messaging
+            chatMessages={chatMessages}
+            refetchMessages={refetchMessages}
+            activeChat={activeChat}
+          />
         </Grid>
       </Grid>
     </Box>

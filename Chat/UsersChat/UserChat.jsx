@@ -9,12 +9,12 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import Avatar from "@/components/Dashboard/Chat/UsersChat/Avatar";
 
 import { Controller, useForm } from "react-hook-form";
+import { format } from "date-fns";
 
-const UserChat = () => {
+const UserChat = ({ chats, activeChat, setActiveChat }) => {
   const { control, handleSubmit, formState } = useForm();
 
   const [activeTab, setActiveTab] = useState("All");
-  const [activeChat, setActiveChat] = useState("");
 
   return (
     <Box
@@ -50,33 +50,33 @@ const UserChat = () => {
               }}
               InputProps={{
                 startAdornment: <SearchOutlinedIcon position="start" />,
-                endAdornment: (
-                  <Box sx={{ position: "relative", marginLeft: "40px" }}>
-                    <Box
-                      sx={{
-                        width: "50px",
-                        height: "50px",
-                        padding: "10px",
-                        backgroundColor: "#2E4765",
-                        position: "absolute",
-                        right: "0",
-                        top: "0",
-                        borderRadius: "50%",
+                // {/* endAdornment: (
+                //   <Box sx={{ position: "relative", marginLeft: "40px" }}>
+                //     <Box
+                //       sx={{
+                //         width: "50px",
+                //         height: "50px",
+                //         padding: "10px",
+                //         backgroundColor: "#2E4765",
+                //         position: "absolute",
+                //         right: "0",
+                //         top: "0",
+                //         borderRadius: "50%",
 
-                        filter: "drop-shadow(1px 2px 0.5rem #2E4765)",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <AddOutlinedIcon
-                        sx={{
-                          fontSize: "30px",
-                          fontWeight: 900,
-                          color: "#fff",
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                ),
+                //         filter: "drop-shadow(1px 2px 0.5rem #2E4765)",
+                //         cursor: "pointer",
+                //       }}
+                //     >
+                //       <AddOutlinedIcon
+                //         sx={{
+                //           fontSize: "30px",
+                //           fontWeight: 900,
+                //           color: "#fff",
+                //         }}
+                //       />
+                //     </Box>
+                //   </Box>
+                // ),*/}
               }}
             />
           )}
@@ -85,7 +85,7 @@ const UserChat = () => {
       <Box
         sx={{
           display: "flex",
-          gap: "20px",
+          gap: "10px",
           margin: "5px 10px 10px",
           padding: "5px 14px",
         }}
@@ -106,7 +106,7 @@ const UserChat = () => {
               }
             >
               <Typography
-                variant="body1"
+                variant="body2"
                 onClick={() => {
                   setActiveTab(item?.name);
                 }}
@@ -129,12 +129,12 @@ const UserChat = () => {
           gap: "10px",
         }}
       >
-        {[1, 2, 3, 4, 5, 6, 7]?.map((item) => {
+        {chats?.map((item) => {
           return (
             <Box
-              key={item}
+              key={item.id}
               sx={
-                activeChat === item
+                activeChat === item.id
                   ? {
                       borderLeft: "5px solid #40D39C",
                       borderRadius: "5px 5px 0 0",
@@ -144,7 +144,7 @@ const UserChat = () => {
                     }
               }
               onClick={() => {
-                setActiveChat(item);
+                setActiveChat(item.id);
               }}
             >
               <Box
@@ -180,9 +180,13 @@ const UserChat = () => {
                       gap: "5px",
                     }}
                   >
-                    <Typography variant="h6">Michael Honge</Typography>
-                    <Typography variant="body2" color="text.gray.A1A1A1">
-                      This the Chat
+                    <Typography variant="body2">
+                      {item?.Users?.fullName}
+                    </Typography>
+                    <Typography variant="f10" color="text.gray.A1A1A1">
+                      {item?.lastMessage?.message === "{{ProductLink}}"
+                        ? "Sent a Product"
+                        : item?.lastMessage?.message}
                     </Typography>{" "}
                   </Box>
                   <Box
@@ -197,8 +201,8 @@ const UserChat = () => {
                     <IconButton>
                       <MoreHorizOutlinedIcon />
                     </IconButton>
-                    <Typography variant="body1" color="text.gray.A1A1A1">
-                      7:45PM
+                    <Typography variant="f10" color="text.gray.A1A1A1">
+                      {format(new Date(item?.lastMessage?.updatedAt), "p")}
                     </Typography>
                   </Box>
                 </Box>
