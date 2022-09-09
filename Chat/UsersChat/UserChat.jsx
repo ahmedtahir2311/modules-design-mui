@@ -10,8 +10,11 @@ import Avatar from "@/components/Dashboard/Chat/UsersChat/Avatar";
 
 import { Controller, useForm } from "react-hook-form";
 import { format } from "date-fns";
+import { useGetCurrentUser } from "@/hooks/user.hook";
 
 const UserChat = ({ chats, activeChat, setActiveChat }) => {
+  const { data: userData } = useGetCurrentUser();
+
   const { control, handleSubmit, formState } = useForm();
 
   const [activeTab, setActiveTab] = useState("All");
@@ -134,7 +137,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
             <Box
               key={item.id}
               sx={
-                activeChat === item.id
+                activeChat.id === item.id
                   ? {
                       borderLeft: "5px solid #40D39C",
                       borderRadius: "5px 5px 0 0",
@@ -144,7 +147,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                     }
               }
               onClick={() => {
-                setActiveChat(item.id);
+                setActiveChat(item);
               }}
             >
               <Box
@@ -161,7 +164,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                   gap: "20px",
                 }}
               >
-                <Avatar />
+                <Avatar image={item?.participant?.image} />
 
                 <Box
                   sx={{
@@ -178,10 +181,11 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                       display: "flex",
                       flexDirection: "column",
                       gap: "5px",
+                      width: "80%",
                     }}
                   >
                     <Typography variant="body2">
-                      {item?.Users?.fullName}
+                      {item?.participant?.fullName}
                     </Typography>
                     <Typography variant="f10" color="text.gray.A1A1A1">
                       {item?.lastMessage?.message === "{{ProductLink}}"
@@ -197,12 +201,12 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                       alignItems: "center",
                     }}
                   >
-                    {" "}
                     <IconButton>
                       <MoreHorizOutlinedIcon />
                     </IconButton>
                     <Typography variant="f10" color="text.gray.A1A1A1">
-                      {format(new Date(item?.lastMessage?.updatedAt), "p")}
+                      {item?.lastMessage?.createdAt &&
+                        format(new Date(item?.lastMessage?.createdAt), "p")}
                     </Typography>
                   </Box>
                 </Box>
@@ -213,7 +217,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
       </Box>
 
       <Box sx={{ margin: "10px 16px" }}>
-        <Avatar user={true} />
+        <Avatar image={userData?.data?.image} user={true} />
       </Box>
     </Box>
   );
