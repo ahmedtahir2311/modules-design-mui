@@ -1,7 +1,8 @@
+import imageLinkFormat from "@/utils/imageUrl";
 import { Badge, Box } from "@mui/material";
 import React from "react";
 
-const Avatar = ({ user = false }) => {
+const Avatar = ({ image, user = false }) => {
   return (
     <Box
       sx={{
@@ -40,7 +41,7 @@ const Avatar = ({ user = false }) => {
               borderRadius: "50%",
               overflow: "hidden",
             }}
-            src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            src={imageLinkFormat(image)}
           />
         </Badge>
       </Badge>

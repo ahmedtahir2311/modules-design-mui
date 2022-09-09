@@ -6,16 +6,16 @@ import { Box, Typography } from "@mui/material";
 //hooks
 import { useProductDetails } from "@/hooks/listing.hook";
 import imageLinkFormat from "@/utils/imageUrl";
+import ROUTES from "@/routes";
 
 const ProductWidget = ({ productId, item, userData }) => {
   const { data: productDetails } = useProductDetails(productId);
 
-  console.log(productDetails);
   return (
     <Box
       sx={{
         display: "inline-block",
-        float: item?.senderId === userData?.id ? "right" : "left",
+        float: item?.senderId === userData?.data?.userId ? "right" : "left",
         padding: "20px 0",
         backgroundColor: "#F0F0FB50",
         maxWidth: "600px",
@@ -67,10 +67,7 @@ const ProductWidget = ({ productId, item, userData }) => {
               }}
             >
               <Box>
-                <Link
-                  href=""
-                  //   href={`/${getPageName(row?.productType)}/${row?.productId}`}
-                >
+                <Link href={`${ROUTES.PRODUCTS}/${productId}`}>
                   <a>
                     <Typography
                       variant="body1"
@@ -88,37 +85,39 @@ const ProductWidget = ({ productId, item, userData }) => {
                   </a>
                 </Link>
 
-                {row?.options && (
+                {item?.metadata?.variant && (
                   <Typography>
-                    {Object.entries(row?.options || {}).map((arr) => {
-                      return (
-                        <Box key={arr[0]} sx={{ margin: "5px 0" }}>
-                          <Typography
-                            variant="body2"
-                            color="text.main"
-                            noWrap
-                            component={"span"}
-                            sx={{
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            {arr[0]}{" "}
-                          </Typography>
-                          :{" "}
-                          <Typography
-                            component={"span"}
-                            variant="body2"
-                            color="text.main"
-                            noWrap
-                            sx={{
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            {arr[1]}{" "}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
+                    {Object.entries(item?.metadata?.variant || {}).map(
+                      (arr) => {
+                        return (
+                          <Box key={arr[0]} sx={{ margin: "5px 0" }}>
+                            <Typography
+                              variant="body2"
+                              color="text.main"
+                              noWrap
+                              component={"span"}
+                              sx={{
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {arr[0]}{" "}
+                            </Typography>
+                            :{" "}
+                            <Typography
+                              component={"span"}
+                              variant="body2"
+                              color="text.main"
+                              noWrap
+                              sx={{
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {arr[1]}
+                            </Typography>
+                          </Box>
+                        );
+                      }
+                    )}
                   </Typography>
                 )}
               </Box>
@@ -127,7 +126,7 @@ const ProductWidget = ({ productId, item, userData }) => {
                 color="text.green.40D39C"
                 sx={{ fontWeight: 600 }}
               >
-                ${" "}
+                $
                 {productDetails?.data?.Variants?.price ||
                   productDetails?.data?.metadata?.price}
               </Typography>
@@ -139,12 +138,4 @@ const ProductWidget = ({ productId, item, userData }) => {
   );
 };
 
-export default ProductWidget;
-
-const row = {
-  options: {
-    color: "White",
-    size: "L",
-    Material: "Wool",
-  },
-};
+export default React.memo(ProductWidget);

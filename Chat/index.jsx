@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Box, Grid } from "@mui/material";
+import _ from "lodash";
 
 //components
 import UserChat from "@/components/Dashboard/Chat/UsersChat/UserChat";
@@ -11,14 +12,35 @@ import { useChatMessages, useChatThreads } from "@/hooks/chat.hook";
 
 const Chat = () => {
   const [activeChat, setActiveChat] = useState("");
+  const [messagesData, setMessagesData] = useState({});
 
   const { data: chatThreads } = useChatThreads();
-  const { data: chatMessages, refetch: refetchMessages } =
-    useChatMessages(activeChat);
+  const { data: chatMessages, refetch: refetchMessages } = useChatMessages(
+    activeChat?.id
+  );
+
+  React.useEffect(() => {
+    if (chatMessages?.data[0] && Object.keys(chatMessages?.data[0]).length) {
+      let value = {
+        conversationId: chatMessages?.data[0]?.conversationId,
+        user: activeChat?.participant,
+        messages: chatMessages?.data?.map((item) => {
+          delete item?.conversationId;
+
+          return item;
+        }),
+      };
+      setMessagesData(value);
+    }
+  }, [chatMessages?.data]);
 
   useEffect(() => {
-    activeChat && refetchMessages();
-  }, [activeChat]);
+    activeChat?.id && refetchMessages();
+  }, [activeChat?.id]);
+
+  // console.log(chatThreads);
+
+  console.log(messagesData);
 
   return (
     <Box
@@ -36,11 +58,7 @@ const Chat = () => {
           />
         </Grid>
         <Grid item lg={8} xl={8}>
-          <Messaging
-            chatMessages={chatMessages}
-            refetchMessages={refetchMessages}
-            activeChat={activeChat}
-          />
+          <Messaging messageData={messagesData} activeChat={activeChat} />
         </Grid>
       </Grid>
     </Box>
