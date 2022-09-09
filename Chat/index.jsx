@@ -38,9 +38,11 @@ const Chat = () => {
     activeChat?.id && refetchMessages();
   }, [activeChat?.id]);
 
-  // console.log(chatThreads);
+  React.useEffect(() => {
+    chatThreads?.data?.length !== 0 && setActiveChat(chatThreads?.data[0]);
+  }, [chatThreads?.data]);
 
-  console.log(messagesData);
+  console.log(chatThreads);
 
   return (
     <Box
