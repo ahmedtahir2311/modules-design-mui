@@ -4,13 +4,14 @@ import { Box, Grid } from "@mui/material";
 import _ from "lodash";
 
 //components
-import UserChat from "@/components/Dashboard/Chat/UsersChat/UserChat";
+import ChatThreads from "@/components/Dashboard/Messenger/chatThreads/ChatThreads";
 import Messaging from "@/components/Dashboard/Chat//Messaging/Messaging";
 import { useChatMessages, useChatThreads } from "@/hooks/chat.hook";
+import ChatMessages from "./ChatMessages/ChatMessages";
 
 //hooks
 
-const Chat = () => {
+const Messenger = () => {
   const [activeChat, setActiveChat] = useState("");
   const [messagesData, setMessagesData] = useState({});
 
@@ -42,29 +43,20 @@ const Chat = () => {
     chatThreads?.data?.length !== 0 && setActiveChat(chatThreads?.data[0]);
   }, [chatThreads?.data]);
 
-  console.log(chatThreads);
-
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "100%",
-      }}
-    >
-      <Grid container>
-        <Grid item lg={4} xl={4}>
-          <UserChat
-            chats={chatThreads?.data}
-            setActiveChat={setActiveChat}
-            activeChat={activeChat}
-          />
-        </Grid>
-        <Grid item lg={8} xl={8}>
-          <Messaging messageData={messagesData} activeChat={activeChat} />
-        </Grid>
-      </Grid>
+    <Box sx={{ display: "flex" }}>
+      <Box sx={{ width: "25%" }}>
+        <ChatThreads
+          chats={chatThreads?.data}
+          setActiveChat={setActiveChat}
+          activeChat={activeChat}
+        />
+      </Box>
+      <Box sx={{ width: "75%" }}>
+        <ChatMessages messageData={messagesData} activeChat={activeChat} />
+      </Box>
     </Box>
   );
 };
 
-export default Chat;
+export default Messenger;

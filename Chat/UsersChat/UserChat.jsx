@@ -93,7 +93,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
           padding: "5px 14px",
         }}
       >
-        {filter.map((item) => {
+        {/* {filter.map((item) => {
           return (
             <Box
               key={item?.name}
@@ -118,7 +118,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
               </Typography>
             </Box>
           );
-        })}
+        })} */}
       </Box>
 
       <Box
@@ -135,9 +135,9 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
         {chats?.map((item) => {
           return (
             <Box
-              key={item.id}
+              key={item?.id}
               sx={
-                activeChat.id === item.id
+                activeChat?.id === item?.id
                   ? {
                       borderLeft: "5px solid #40D39C",
                       borderRadius: "5px 5px 0 0",
@@ -164,7 +164,7 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                   gap: "20px",
                 }}
               >
-                <Avatar image={item?.participant?.image} />
+                <Avatar image={item?.participant?.image} user={true} />
 
                 <Box
                   sx={{
@@ -199,14 +199,15 @@ const UserChat = ({ chats, activeChat, setActiveChat }) => {
                       flexDirection: "column",
                       gap: "5px",
                       alignItems: "center",
+                      width: "20%",
                     }}
                   >
-                    <IconButton>
-                      <MoreHorizOutlinedIcon />
+                    <IconButton disabled>
+                      {/* <MoreHorizOutlinedIcon /> */}
                     </IconButton>
                     <Typography variant="f10" color="text.gray.A1A1A1">
                       {item?.lastMessage?.createdAt &&
-                        format(new Date(item?.lastMessage?.createdAt), "p")}
+                        format(new Date(item?.lastMessage?.createdAt), "p ")}
                     </Typography>
                   </Box>
                 </Box>

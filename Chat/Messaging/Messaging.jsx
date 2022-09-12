@@ -166,7 +166,7 @@ const Messaging = ({ messageData, activeChat }) => {
               overflow: "auto",
               display: "flex",
               flexDirection: "column",
-              gap: "10px",
+              gap: "20px",
               borderTop: "1px solid #F0F0FB",
               borderBottom: "1px solid #F0F0FB",
             }}
@@ -199,14 +199,14 @@ const Messaging = ({ messageData, activeChat }) => {
                   <Box
                     sx={{
                       width: "100%",
-                      justifyItems: "flex-end",
                       padding: "0 0 14px",
                     }}
                   >
                     <Box
                       sx={{
+                        margin: "8px 0",
                         display: "flex",
-                        gap: "20px",
+                        gap: "15px",
                         alignItems: "center",
                         justifyContent:
                           item?.senderId === userData?.data?.userId
@@ -300,7 +300,7 @@ const Messaging = ({ messageData, activeChat }) => {
                 height: "85%",
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px",
+                gap: "20px",
               }}
             >
               {chatMessage?.length !== 0 &&
