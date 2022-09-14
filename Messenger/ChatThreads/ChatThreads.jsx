@@ -14,13 +14,13 @@ import { useGetCurrentUser } from "@/hooks/user.hook";
 //utils
 import imageLinkFormat from "@/utils/imageUrl";
 
-const ChatThreads = ({ chats, activeChat, setActiveChat }) => {
+const ChatThreads = ({ chats, activeChat, setActiveChat, setOpen }) => {
   const { data: userData } = useGetCurrentUser();
 
   const { control, formState } = useForm();
   return (
     <Box sx={{ padding: "10px ", height: "100vh" }}>
-      <Box sx={{ padding: "30px 25px " }}>
+      {/* <Box sx={{ padding: "30px 25px " }}>
         <Typography variant="f18" sx={{ fontWeight: "500" }}>
           Online now
         </Typography>
@@ -85,11 +85,11 @@ const ChatThreads = ({ chats, activeChat, setActiveChat }) => {
             borderWidth: "1px",
           }}
         />
-      </Box>
+      </Box> */}
       <Box sx={{ padding: "10px 0 0" }}>
-        <Typography variant="f20" sx={{ fontWeight: "500", padding: "0 25px" }}>
+        {/* <Typography variant="f20" sx={{ fontWeight: "500", padding: "0 25px" }}>
           Chats
-        </Typography>
+        </Typography> */}
 
         <Controller
           control={control}
@@ -112,10 +112,11 @@ const ChatThreads = ({ chats, activeChat, setActiveChat }) => {
                 backgroundColor: "#F0F0FB",
                 borderRadius: "7px",
                 outline: "none",
-                padding: "0",
+                marginBottom: "40px",
+
                 "& .MuiOutlinedInput-input": {
                   borderRadius: "4px",
-                  padding: "7px",
+                  padding: "20px 0",
                 },
               }}
               InputProps={{
@@ -161,8 +162,13 @@ const ChatThreads = ({ chats, activeChat, setActiveChat }) => {
                   width={"36px"}
                   height={"36px"}
                   component={"img"}
-                  src={imageLinkFormat(item?.participant?.image)}
+                  src={
+                    item?.participant?.image
+                      ? imageLinkFormat(item?.participant?.image)
+                      : "/images/detail/dummy.png"
+                  }
                   sx={{ borderRadius: " 50%" }}
+                  onClick={() => setOpen(true)}
                 />
                 <Box
                   sx={{

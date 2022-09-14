@@ -49,7 +49,11 @@ const ProductWidget = ({ productId, item, userData }) => {
           >
             <Box
               component="img"
-              src={imageLinkFormat(productDetails?.data?.images[0]?.key)}
+              src={
+                productDetails?.data?.images[0]?.key
+                  ? imageLinkFormat(productDetails?.data?.images[0]?.key)
+                  : "/images/detail/dummy.png"
+              }
               width="80px"
               height="80px"
             />

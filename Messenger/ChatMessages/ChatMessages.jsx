@@ -20,7 +20,12 @@ import ProductWidget from "./ProductWidget";
 //utils
 import imageLinkFormat from "@/utils/imageUrl";
 
-const ChatMessages = ({ messageData, activeChat }) => {
+//context
+import { useSocketContext } from "@/context/socket.context";
+
+const ChatMessages = ({ messageData, activeChat, setOpen }) => {
+  const { socket, isConnected } = useSocketContext();
+
   const { data: userData } = useGetCurrentUser();
 
   const bottomRef = useRef(null);
@@ -42,7 +47,7 @@ const ChatMessages = ({ messageData, activeChat }) => {
     isSuccess,
   } = useSendMessage();
 
-  const { control, handleSubmit, formState, setValue } = useForm();
+  const { control, formState, setValue } = useForm();
 
   async function onSendMessage(e, { retry }) {
     e.preventDefault();
@@ -57,11 +62,10 @@ const ChatMessages = ({ messageData, activeChat }) => {
               type: type,
               metadata: null,
               createdAt: new Date().toDateString(),
-              updatedAt: new Date(),
+              updatedAt: new Date().toDateString(),
             },
           ],
         });
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 
       const body = {
         content: message,
@@ -69,41 +73,76 @@ const ChatMessages = ({ messageData, activeChat }) => {
       };
       setmessage("");
 
-      await sendMessaage({
+      const res = await sendMessaage({
         conversationId: allMessages?.conversationId,
         body,
       });
+
+      if (res?.data) {
+        console.log("sent", res?.data);
+        console.log(userData?.data?.userId, res?.data?.senderId);
+        if (userData?.data?.userId === res?.data?.senderId) {
+          setAllMessages({
+            ...allMessages,
+            messages: [
+              ...allMessages.messages,
+              {
+                createdAt: res?.data?.createdAt,
+                id: res?.data?.id,
+                message: res?.data?.message,
+                metadata: res?.data?.metadata,
+                senderId: res?.data?.senderId,
+                type: sentmessage?.data?.type,
+                updatedAt: res?.data?.updatedAt,
+              },
+            ],
+          });
+          setChatmessage({
+            messages: [],
+          });
+        }
+      }
     }
   }
 
   useEffect(() => {
-    setValue("content", "");
     setAllMessages(messageData);
   }, [activeChat?.id, messageData]);
 
-  useEffect(() => {
-    if (sentmessage?.data) {
-      const data = { ...allMessages };
-      data?.messages?.push({
-        createdAt: sentmessage?.data?.createdAt,
-        id: sentmessage?.data?.id,
-        message: sentmessage?.data?.message,
-        metadata: sentmessage?.data?.metadata,
-        senderId: sentmessage?.data?.senderId,
-        type: sentmessage?.data?.type,
-        updatedAt: sentmessage?.data?.updatedAt,
-      });
-      setAllMessages(data);
-
-      setChatmessage({
-        messages: [],
+  const messageListener = (data) => {
+    if (userData?.data?.userId !== data?.senderId) {
+      setAllMessages((previousMessages) => {
+        console.log(previousMessages);
+        return {
+          ...previousMessages,
+          messages: [
+            ...previousMessages.messages,
+            {
+              createdAt: data?.createdAt,
+              id: data?.id,
+              message: data?.message,
+              metadata: data?.metadata,
+              senderId: data?.senderId,
+              type: data?.type,
+              updatedAt: data?.updatedAt,
+            },
+          ],
+        };
       });
     }
-  }, [sentmessage]);
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      if (socket._callbacks["$message"] == undefined) {
+        socket.on("message", messageListener);
+      }
+    }
+  }, [isConnected]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [allMessages, activeChat?.id, messageData]);
+  }, [activeChat?.id, allMessages]);
 
   return (
     <Box
@@ -139,7 +178,7 @@ const ChatMessages = ({ messageData, activeChat }) => {
                 color: "#B6B9C3",
                 width: "60%",
                 backgroundColor: "#F0F0FB",
-
+                visibility: "hidden",
                 borderRadius: "7px",
                 outline: "none",
                 padding: "0",
@@ -154,15 +193,43 @@ const ChatMessages = ({ messageData, activeChat }) => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
-            gap: "2px",
+            flexDirection: "row",
+            gap: "10px",
+            alignItems: "center",
           }}
         >
-          <Typography variant="f26" sx={{ fontWeight: 600 }}>
+          <Box
+            component="img"
+            sx={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setOpen(true);
+            }}
+            src={
+              !allMessages?.user?.image || allMessages?.user?.image.length == 0
+                ? "/images/detail/dummy.png"
+                : imageLinkFormat(allMessages?.user?.image)
+            }
+          />
+          <Typography
+            variant="f26"
+            sx={{
+              fontWeight: 600,
+              cursor: "pointer",
+              "&.MuiTypography-root:hover": {
+                color: "text.green.40D39C",
+              },
+            }}
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
             {allMessages?.user?.fullName}
-          </Typography>
-          <Typography variant="body2" color="text.gray.A1A1A1">
-            Typing ...{" "}
           </Typography>
         </Box>
       </Box>
@@ -170,9 +237,9 @@ const ChatMessages = ({ messageData, activeChat }) => {
       <Box
         sx={{
           marginTop: "30px",
-          //   backgroundColor: "red",
           width: "100%",
-          height: { lg: "55vh", xl: "70vh" },
+          height: { lg: "60vh", xl: "72vh" },
+          padding: "0 10px",
           overflow: "auto",
         }}
       >
@@ -330,4 +397,4 @@ const ChatMessages = ({ messageData, activeChat }) => {
   );
 };
 
-export default ChatMessages;
+export default React.memo(ChatMessages);
